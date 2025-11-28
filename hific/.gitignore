@@ -18,6 +18,8 @@ results/
 imgs/*.pdf
 data/*.jpg
 data/*.png
+dataset/
+data/originals/
 hific_dev/
 *.slurm
 *.tex
