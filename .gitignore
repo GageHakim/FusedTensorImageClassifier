@@ -5,3 +5,10 @@
 .idea/
 *.swp
 *.swo
+
+# Dataset and mdoel checkpoints
+dataset/
+*.png
+*.hfc
+*.pth
+*.pt
