@@ -63,6 +63,8 @@ This approach allows the model to learn from the rich, compressed feature space 
     cd ImageClassifierEfficientNet
     ```
 
+    If you are lost and don't have the submodule, run this: git submodule update --recursive
+
 2. Install the dependencies:
 
     ```bash
@@ -106,4 +108,3 @@ python evaluate_fused_classifier.py
 ```
 
 This will load `best_fused_classifier.pth` and print the final accuracy and average inference time.
-
