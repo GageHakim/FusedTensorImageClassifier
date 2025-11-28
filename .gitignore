@@ -1,0 +1,15 @@
+# macOS
+.DS_Store
+
+# IDEs
+.idea/
+*.swp
+*.swo
+
+# Dataset and mdoel checkpoints
+dataset/
+*.pth
+*.pt
+
+.gemini/
+gha-creds-*.json

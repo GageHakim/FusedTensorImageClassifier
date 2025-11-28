@@ -1,8 +1,0 @@
-LICENSE
-README.md
-setup.py
-hific.egg-info/PKG-INFO
-hific.egg-info/SOURCES.txt
-hific.egg-info/dependency_links.txt
-hific.egg-info/not-zip-safe
-hific.egg-info/top_level.txt
