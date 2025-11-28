@@ -2,5 +2,7 @@ torch
 torchvision
 numpy
 scikit-learn
-efficientnet-pytorch
 Pillow
+tqdm
+matplotlib
+seaborn
