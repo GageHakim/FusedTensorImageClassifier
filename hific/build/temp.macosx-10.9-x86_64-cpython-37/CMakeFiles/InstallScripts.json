@@ -1,0 +1,8 @@
+{
+	"InstallScripts" : 
+	[
+		"/Users/gagecaesarhakim/Desktop/Eaason/hific/build/temp.macosx-10.9-x86_64-cpython-37/cmake_install.cmake",
+		"/Users/gagecaesarhakim/Desktop/Eaason/hific/build/temp.macosx-10.9-x86_64-cpython-37/pybind11/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

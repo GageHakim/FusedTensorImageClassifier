@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="65eaed37-275d-40f4-ad12-aeaddeda6a4c" name="Changes" comment="added">
+      <change beforePath="$PROJECT_DIR$/EfficientNet-PyTorch/.github/workflows/main.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/EfficientNet-PyTorch/best_model.pth" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/EfficientNet-PyTorch/efficientnet_pytorch/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/EfficientNet-PyTorch/efficientnet_pytorch/model.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/EfficientNet-PyTorch/efficientnet_pytorch/utils.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/EfficientNet-PyTorch/predict.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/EfficientNet-PyTorch/train.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
+  "associatedIndex": 0
+}]]></component>
+  <component name="ProjectId" id="362X77gwzFEPFkEcWv1TZjdcD5P" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.compress.executor": "Run",
+    "Python.evaluate_fused_classifier.executor": "Run",
+    "Python.teeest.executor": "Run",
+    "Python.train_fused_classifier.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "master",
+    "last_opened_file_path": "/Users/gagecaesarhakim/Desktop/eason",
+    "settings.editor.selected.configurable": "preferences.pluginManager"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/dataset/test" />
+      <recent name="$PROJECT_DIR$/dataset/bacteria_resized_224" />
+      <recent name="$PROJECT_DIR$/dataset" />
+      <recent name="$PROJECT_DIR$/high-fidelity-generative-compression/data/compressed_output" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/hific" />
+      <recent name="$PROJECT_DIR$/high-fidelity-generative-compression/data/originals" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-python-sdk-50da183f06c8-d3b881c8e49f-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-233.13135.95" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="65eaed37-275d-40f4-ad12-aeaddeda6a4c" name="Changes" comment="" />
+      <created>1764205469972</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1764205469972</updated>
+    </task>
+    <task id="LOCAL-00001" summary="part 1">
+      <option name="closed" value="true" />
+      <created>1764211731008</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1764211731008</updated>
+    </task>
+    <task id="LOCAL-00002" summary="part 1">
+      <option name="closed" value="true" />
+      <created>1764211738060</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1764211738060</updated>
+    </task>
+    <task id="LOCAL-00003" summary="part 1">
+      <option name="closed" value="true" />
+      <created>1764211771162</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1764211771162</updated>
+    </task>
+    <task id="LOCAL-00004" summary="added">
+      <option name="closed" value="true" />
+      <created>1764270385218</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1764270385218</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="part 1" />
+    <MESSAGE value="added" />
+    <option name="LAST_COMMIT_MESSAGE" value="added" />
+  </component>
+</project>
