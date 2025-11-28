@@ -3,6 +3,7 @@
 This project is an advanced image classifier for different types of bacteria, built using a custom `FusedClassifier` model in PyTorch.
 
 ## Project Structure
+
 ```
 .
 ├── dataset
@@ -22,12 +23,13 @@ This project is an advanced image classifier for different types of bacteria, bu
 ## Dataset
 
 The dataset consists of images of the following bacteria:
-*   `B.subtilis`
-*   `C.albicans`
-*   `Contamination`
-*   `E.coli`
-*   `P.aeruginosa`
-*   `S.aureus`
+
+* `B.subtilis`
+* `C.albicans`
+* `Contamination`
+* `E.coli`
+* `P.aeruginosa`
+* `S.aureus`
 
 The raw images are expected to be in the `dataset/bacteria_resized_224` directory, organized into subdirectories for each class.
 
@@ -35,11 +37,11 @@ The raw images are expected to be in the `dataset/bacteria_resized_224` director
 
 This project uses a `FusedClassifier` that leverages a pre-trained, frozen **HiFiC** (High-Fidelity Image Compression) model as a feature extractor.
 
-1.  **Feature Extraction**: The HiFiC model processes the input images and extracts two latent tensors:
-    *   `y`: A representation of the image's content.
-    *   `latent_scales`: A representation of the image's entropy and textural complexity.
-2.  **Fusion**: A `GatedFusion` layer merges these two tensors, allowing the model to learn the optimal combination of content and texture features.
-3.  **Classification**: The fused tensor is passed to an **EfficientNet** classification head (initialized from scratch) to produce the final prediction.
+1. **Feature Extraction**: The HiFiC model processes the input images and extracts two latent tensors:
+    * `y`: A representation of the image's content.
+    * `latent_scales`: A representation of the image's entropy and textural complexity.
+2. **Fusion**: A `GatedFusion` layer merges these two tensors, allowing the model to learn the optimal combination of content and texture features.
+3. **Classification**: The fused tensor is passed to an **EfficientNet** classification head (initialized from scratch) to produce the final prediction.
 
 This approach allows the model to learn from the rich, compressed feature space of the HiFiC model rather than from raw pixels.
 
@@ -47,22 +49,26 @@ This approach allows the model to learn from the rich, compressed feature space 
 
 ### Prerequisites
 
-*   Python 3.x
-*   PyTorch
-*   TorchVision
-*   and other dependencies listed in `requirements.txt`
+* Python 3.x
+* PyTorch
+* TorchVision
+* and other dependencies listed in `requirements.txt`
 
 ### Installation
 
-1.  Clone the repository and initialize the `hific` submodule:
+1. Clone the repository and initialize the `hific` submodule:
+
     ```bash
     git clone --recurse-submodules https://github.com/GageHakim/ImageClassifierEfficientNet.git
     cd ImageClassifierEfficientNet
     ```
-2.  Install the dependencies:
+
+2. Install the dependencies:
+
     ```bash
     pip install -r requirements.txt
     ```
+
     You may also need to build the C++ extension for HiFiC, which can be done by running `python setup.py develop` inside the `hific` directory.
 
 ## Usage
@@ -78,14 +84,18 @@ python prepare_dataset.py
 ### 2. Train the Model
 
 To train the `FusedClassifier`, run the `train_fused_classifier.py` script. The script will:
-*   Load the pre-trained HiFiC model (`hific_low.pt`).
-*   Train the `FusedClassifier`, updating only the fusion layer and the EfficientNet head.
-*   Display progress bars for training and validation.
-*   Save the best-performing model to `best_fused_classifier.pth`.
+
+* Load the pre-trained HiFiC model (`hific_low.pt`).
+* Train the `FusedClassifier`, updating only the fusion layer and the EfficientNet head.
+* Display progress bars for training and validation.
+* Save the best-performing model to `best_fused_classifier.pth`.
 
 ```bash
 python train_fused_classifier.py
 ```
+
+Pretrained models:
+<https://drive.google.com/drive/folders/1M9u6C53wyyjp519ZYfTBI3YEgUDyok1P?usp=sharing>
 
 ### 3. Evaluate the Model
 
@@ -96,3 +106,4 @@ python evaluate_fused_classifier.py
 ```
 
 This will load `best_fused_classifier.pth` and print the final accuracy and average inference time.
+
