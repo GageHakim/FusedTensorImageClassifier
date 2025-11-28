@@ -10,3 +10,6 @@
 dataset/
 *.pth
 *.pt
+
+.gemini/
+gha-creds-*.json
