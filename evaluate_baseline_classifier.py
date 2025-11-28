@@ -1,7 +1,7 @@
 from model import Model as HiFiCModel
 from default_config import ModelModes, hific_args
 from helpers import utils
-from fused_classifier import FusedClassifier
+from baseline_classifier import BaselineClassifier
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
@@ -20,7 +20,7 @@ sys.path.append('./hific')
 sys.path.append('./hific/src')
 
 
-def plot_confusion_matrix(cm, class_names, save_path='confusion_matrix.png'):
+def plot_confusion_matrix(cm, class_names, save_path='confusion_matrix_baseline.png'):
     """
     Generates and saves a confusion matrix heatmap.
     """
@@ -29,7 +29,7 @@ def plot_confusion_matrix(cm, class_names, save_path='confusion_matrix.png'):
                 xticklabels=class_names, yticklabels=class_names)
     plt.ylabel('True Label')
     plt.xlabel('Predicted Label')
-    plt.title('Confusion Matrix')
+    plt.title('Confusion Matrix (Baseline)')
     plt.tight_layout()
     plt.savefig(save_path)
     print(f"Confusion Matrix saved to {save_path}")
@@ -49,7 +49,7 @@ def synchronize_device(device):
 def main():
     # --- Config ---
     hific_checkpoint_path = './hific_low.pt'
-    fused_classifier_checkpoint_path = 'best_fused_classifier.pth'
+    baseline_classifier_checkpoint_path = 'best_baseline_classifier.pth'
     dataset_path = './dataset'
     batch_size = 32
     num_classes = 6
@@ -90,7 +90,7 @@ def main():
         new_state_dict[name] = v
 
     try:
-        hific_model.load_state_dict(new_state_dict, strict=True)
+        hific_model.load_state_dict(new_state_dict, strict=.venv)
     except RuntimeError:
         hific_model.load_state_dict(new_state_dict, strict=False)
 
@@ -100,16 +100,13 @@ def main():
     hific_model.to(device)
     hific_model.eval()
 
-    # --- Load Fused Classifier ---
+    # --- Load Baseline Classifier ---
     print("Loading Classifier Head...")
-    # Make sure this matches the training script (LatentResNet vs EfficientNet)
-    model = FusedClassifier(hific_model, num_classes=num_classes)
+    model = BaselineClassifier(hific_model, num_classes=num_classes)
 
     # Load Classifier Weights
-    # We use strict=False here just in case of minor version diffs,
-    # but strictly speaking, it should match perfectly.
     model.load_state_dict(torch.load(
-        fused_classifier_checkpoint_path, map_location=device))
+        baseline_classifier_checkpoint_path, map_location=device))
     model.to(device)
     model.eval()
 
@@ -131,31 +128,18 @@ def main():
     # --- Evaluation Loop ---
     all_preds = []
     all_labels = []
-    total_compression_time = 0.0
-    total_classification_time = 0.0
+    total_inference_time = 0.0
 
     with torch.no_grad():
         for i, (images, labels) in enumerate(test_loader):
             images = images.to(device)
             labels = labels.to(device)
 
-            # 1. Time Compression
+            start_time = time.time()
+            outputs = model(images)
+            end_time = time.time()
+            total_inference_time += (end_time - start_time)
 
-            start_compress = time.time()
-
-            y, latent_scales = model.compress(images)
-
-            end_compress = time.time()
-            total_compression_time += (end_compress - start_compress)
-
-            # 2. Time Classification
-
-            start_classify = time.time()
-
-            outputs = model.classify(y, latent_scales)
-
-            end_classify = time.time()
-            total_classification_time += (end_classify - start_classify)
 
             _, predicted = torch.max(outputs, 1)
 
@@ -168,26 +152,16 @@ def main():
     acc = accuracy_score(all_labels, all_preds) * 100
 
     # 2. Timing
-    total_time = total_compression_time + total_classification_time
     num_images = len(test_dataset)
 
-    avg_total_time_ms = (total_time / num_images) * 1000
-    avg_compression_time_ms = (total_compression_time / num_images) * 1000
-    avg_classification_time_ms = (
-        total_classification_time / num_images) * 1000
+    avg_total_time_ms = (total_inference_time / num_images) * 1000
+    fps_total = 1.0 / (total_inference_time / num_images)
 
-    fps_total = 1.0 / (total_time / num_images)
-    fps_compression = 1.0 / (total_compression_time / num_images)
-    fps_classification = 1.0 / (total_classification_time / num_images)
 
     print("-" * 30)
     print(f"Global Accuracy: {acc:.2f}%")
     print("-" * 30)
-    print("Inference Speed Breakdown:")
-    print(
-        f"  - Compression:    {avg_compression_time_ms:.2f} ms/image ({fps_compression:.1f} FPS)")
-    print(
-        f"  - Classification: {avg_classification_time_ms:.2f} ms/image ({fps_classification:.1f} FPS)")
+    print("Inference Speed:")
     print(
         f"  - Total:          {avg_total_time_ms:.2f} ms/image ({fps_total:.1f} FPS)")
     print("-" * 30)

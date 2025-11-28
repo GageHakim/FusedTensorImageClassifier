@@ -8,6 +8,8 @@
 
 # Dataset and mdoel checkpoints
 dataset/
+dataset2/
+AGAR_dataset/
 *.pth
 *.pt
 

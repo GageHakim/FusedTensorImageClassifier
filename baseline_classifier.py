@@ -1,5 +1,4 @@
 from helpers import maths
-from network import hyper
 from network import encoder
 import torch
 import torch.nn as nn
@@ -11,7 +10,7 @@ sys.path.append('./hific')
 sys.path.append('./hific/src')
 
 
-# --- 1. The Custom Lightweight Backbone ---
+# --- 1. The Custom Lightweight Backbone (Copied from FusedClassifier) ---
 class ResidualBlock(nn.Module):
     """
     Standard ResNet Block with optional downsampling.
@@ -52,22 +51,15 @@ class LatentResNet(nn.Module):
         super(LatentResNet, self).__init__()
 
         # 1. Projection Layer: 220 channels -> 128 channels
-        # We reduce channels slightly to control parameter count,
-        # but keep spatial dim 16x16.
         self.conv_in = nn.Conv2d(
             in_channels, 128, kernel_size=3, stride=1, padding=1, bias=False)
         self.bn_in = nn.BatchNorm2d(128)
 
         # 2. Residual Stages
-        # Stage 1: 16x16 resolution
         self.layer1 = ResidualBlock(128, 128, stride=1)
         self.layer2 = ResidualBlock(128, 128, stride=1)
-
-        # Stage 2: Downsample to 8x8
         self.layer3 = ResidualBlock(128, 256, stride=2)
         self.layer4 = ResidualBlock(256, 256, stride=1)
-
-        # Stage 3: Downsample to 4x4 (Final semantic features)
         self.layer5 = ResidualBlock(256, 512, stride=2)
         self.layer6 = ResidualBlock(512, 512, stride=1)
 
@@ -76,7 +68,7 @@ class LatentResNet(nn.Module):
         self.dropout = nn.Dropout(dropout_rate)
         self.fc = nn.Linear(512, num_classes)
 
-        # Initialize weights (He initialization for ReLU networks)
+        # Initialize weights
         self._initialize_weights()
 
     def _initialize_weights(self):
@@ -89,60 +81,38 @@ class LatentResNet(nn.Module):
                 nn.init.constant_(m.bias, 0)
 
     def forward(self, x):
-        # Input: [B, 220, 16, 16]
-        out = F.relu(self.bn_in(self.conv_in(x)))  # -> [B, 128, 16, 16]
-
+        out = F.relu(self.bn_in(self.conv_in(x)))
         out = self.layer1(out)
-        out = self.layer2(out)  # -> [B, 128, 16, 16]
-
+        out = self.layer2(out)
         out = self.layer3(out)
-        out = self.layer4(out)  # -> [B, 256, 8, 8]
-
+        out = self.layer4(out)
         out = self.layer5(out)
-        out = self.layer6(out)  # -> [B, 512, 4, 4]
-
-        out = self.avg_pool(out)  # -> [B, 512, 1, 1]
-        out = out.view(out.size(0), -1)  # Flatten
+        out = self.layer6(out)
+        out = self.avg_pool(out)
+        out = out.view(out.size(0), -1)
         out = self.dropout(out)
         out = self.fc(out)
         return out
 
 
-# --- 2. The Gated Fusion Module (Unchanged) ---
-class GatedFusion(nn.Module):
-    def __init__(self, in_channels):
-        super(GatedFusion, self).__init__()
-        self.gate_conv = nn.Conv2d(in_channels * 2, in_channels, kernel_size=1)
-        self.activation = nn.LeakyReLU(0.2)
+# --- 2. The Main Baseline Classifier ---
+class BaselineClassifier(nn.Module):
+    """
+    A baseline classifier that uses only the main latent tensor 'y' from HiFiC's encoder,
+    without the hyperprior-based attention/fusion mechanism.
+    """
 
-    def forward(self, x1, x2):
-        x = torch.cat([x1, x2], dim=1)
-        gate = torch.sigmoid(self.gate_conv(x))
-        return gate * x1 + (1 - gate) * x2
-
-
-# --- 3. The Main Fused Classifier ---
-class FusedClassifier(nn.Module):
     def __init__(self, hific_model, num_classes=6):
-        super(FusedClassifier, self).__init__()
+        super(BaselineClassifier, self).__init__()
 
-        # --- Feature Extraction Components ---
+        # --- Feature Extraction Component ---
         self.encoder = hific_model.Encoder
-        self.analysis_net = hific_model.Hyperprior.analysis_net
-        self.synthesis_mu = hific_model.Hyperprior.synthesis_mu
-        self.synthesis_std = hific_model.Hyperprior.synthesis_std
 
-        # Freeze HiFiC (Strictly required)
+        # Freeze HiFiC Encoder (Strictly required)
         self._freeze_module(self.encoder)
-        self._freeze_module(self.analysis_net)
-        self._freeze_module(self.synthesis_mu)
-        self._freeze_module(self.synthesis_std)
 
-        # HiFiC typically uses 220 latent channels
+        # --- Classification Head ---
         latent_channels = hific_model.args.latent_channels
-        self.fusion = GatedFusion(latent_channels)
-
-        # --- Replaced EfficientNet with LatentResNet ---
         print(
             f"Initializing Custom LatentResNet for {latent_channels} channels...")
         self.classifier = LatentResNet(
@@ -155,29 +125,13 @@ class FusedClassifier(nn.Module):
 
     def forward(self, x):
         """
-        For compatibility with training loop.
+        Full forward pass for training and evaluation.
         """
-        y, latent_scales = self.compress(x)
-        logits = self.classify(y, latent_scales)
-        return logits
-
-    def compress(self, x):
-        """
-        Runs the HiFiC encoder part of the model.
-        """
+        # 1. Extract latents (without gradients)
         with torch.no_grad():
             y = self.encoder(x)
-            z = self.analysis_net(y)
-            z_quantized = torch.round(z)
-            latent_scales = self.synthesis_std(z_quantized)
-            latent_scales = maths.LowerBoundToward.apply(latent_scales, 0.11)
-        return y, latent_scales
 
-    def classify(self, y, latent_scales):
-        """
-        Runs the fusion and classification head.
-        """
-        # Detach inputs to stop backprop into HiFiC
-        fused = self.fusion(y.detach(), latent_scales.detach())
-        logits = self.classifier(fused)
+        # 2. Classify using the latent tensor
+        # Gradients will flow from here back to the classification head
+        logits = self.classifier(y.detach())
         return logits

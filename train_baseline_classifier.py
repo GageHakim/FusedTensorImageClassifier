@@ -1,7 +1,7 @@
 from model import Model as HiFiCModel
 from default_config import ModelModes, hific_args
 from helpers import utils
-from fused_classifier import FusedClassifier
+from baseline_classifier import BaselineClassifier
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -80,7 +80,7 @@ def main():
 
     # --- Create Fused Classifier ---
     # Ensure FusedClassifier properly registers hific_model
-    model = FusedClassifier(hific_model, num_classes=num_classes)
+    model = BaselineClassifier(hific_model, num_classes=num_classes)
     model.to(device)
 
     # --- Data & Augmentation ---
@@ -178,7 +178,7 @@ def main():
         # Save Best Model
         if accuracy > best_acc:
             best_acc = accuracy
-            torch.save(model.state_dict(), 'best_fused_classifier.pth')
+            torch.save(model.state_dict(), 'best_baseline_classifier.pth')
             print(f"--> New best model saved with accuracy: {best_acc:.2f}%")
 
     print(f"Training finished. Best Accuracy: {best_acc:.2f}%")
