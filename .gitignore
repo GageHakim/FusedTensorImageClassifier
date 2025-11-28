@@ -7,9 +7,9 @@
 *.swo
 
 # Dataset and mdoel checkpoints
-.dataset/
-.*.jpeg
+dataset/
+.*.jpg
 .*.png
 .*.hfc
 .*.pth
-.*.pt
+hific_low.pt
