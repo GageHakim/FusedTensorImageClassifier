@@ -11,5 +11,7 @@ dataset/
 *.pth
 *.pt
 
+*.png
+
 .gemini/
 gha-creds-*.json
