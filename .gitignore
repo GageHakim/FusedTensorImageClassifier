@@ -13,5 +13,8 @@ dataset/
 
 *.png
 
+
+__pycache__/
+
 .gemini/
 gha-creds-*.json
