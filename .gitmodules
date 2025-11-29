@@ -1,4 +1,0 @@
-[submodule "hific"]
-	path = hific
-	url = https://github.com/mea432/hific.git
-	branch = InstallableSubmodule
