@@ -11,20 +11,11 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 
-# --- Imports (Adjust paths as needed) ---
-sys.path.append('./hific')
-sys.path.append('./hific/src')
-from fused_classifier import FusedClassifier
-from helpers import utils
-from default_config import ModelModes, hific_args
-from model import Model as HiFiCModel
-
-
-from evaluation_utils import plot_confusion_matrix, synchronize_device
-from fused_classifier import FusedClassifier
-from helpers import utils
-from default_config import ModelModes, hific_args
-from model import Model as HiFiCModel
+from scripts.fused_classifier import FusedClassifier
+from scripts.evaluation_utils import plot_confusion_matrix, synchronize_device
+from hific.src.helpers import utils
+from hific.default_config import ModelModes, hific_args
+from hific.src.model import Model as HiFiCModel
 
 
 def evaluate_fused():

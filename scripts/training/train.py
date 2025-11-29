@@ -158,8 +158,20 @@ def main():
     parser.add_argument('--test', action='store_true', help='Test the model.')
     args = parser.parse_args()
 
-    data_dir = '../dataset'
+    data_dir = 'dataset'
     batch_size = 32
+
+    if torch.cuda.is_available():
+        device = torch.device("cuda")
+        print("Using device: CUDA (Nvidia)")
+    elif torch.backends.mps.is_available():
+        device = torch.device("mps")
+        print("Using device: MPS (Apple Silicon)")
+    else:
+        device = torch.device("cpu")
+        print("Using device: CPU (Warning: Slow)")
+    pin_memory = True if device.type == 'cuda' else False
+    print(f"Using device: {device}")
     
     if args.test:
         test_loader, classes = get_test_loader(data_dir, batch_size)
@@ -178,4 +190,5 @@ def main():
         train_model(model, train_loader, val_loader, criterion, optimizer, num_epochs=num_epochs)
 
 if __name__ == '__main__':
+
     main()
