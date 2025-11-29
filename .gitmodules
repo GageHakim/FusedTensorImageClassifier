@@ -1,0 +1,4 @@
+[submodule "hific_sub"]
+	path = hific_sub
+	url = https://github.com/mea432/hific.git
+	branch = plswork
