@@ -11,8 +11,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 
-from evaluation_utils import plot_confusion_matrix, synchronize_device
-from mean_fused_classifier import MeanFusedClassifier
+from scripts.evaluation_utils import plot_confusion_matrix, synchronize_device
+from scripts.mean_fused_classifier import MeanFusedClassifier
 
 
 def evaluate_mean_fused():

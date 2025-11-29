@@ -2,11 +2,18 @@ import torch
 from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
+import sys
+import os
 
-from evaluate_baseline_classifier import evaluate_baseline
-from evaluate_improved_baseline_classifier import evaluate_improved_baseline
-from evaluate_fused_classifier import evaluate_fused
-from evaluate_mean_fused_classifier import evaluate_mean_fused
+# Add the project root to the Python path
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
+
+from scripts.evaluation.evaluate_baseline_classifier import evaluate_baseline
+from scripts.evaluation.evaluate_improved_baseline_classifier import evaluate_improved_baseline
+from scripts.evaluation.evaluate_fused_classifier import evaluate_fused
+from scripts.evaluation.evaluate_mean_fused_classifier import evaluate_mean_fused
+from scripts.evaluation.evaluate_efficientnet import evaluate_efficientnet
 
 
 def run_evaluation(console, title, eval_function):
@@ -104,6 +111,7 @@ def main():
         ("Improved Baseline", evaluate_improved_baseline),
         ("Fused Classifier", evaluate_fused),
         ("Mean Fused Classifier", evaluate_mean_fused),
+        ("EfficientNet", lambda: evaluate_efficientnet(model_path='best_model.pth')),
     ]
 
     # --- Run Evaluations ---
@@ -117,7 +125,8 @@ def main():
         "[bold]Baseline Classifier:[/bold] A simple CNN trained from scratch on the target dataset.\n"
         "[bold]Improved Baseline:[/bold] Uses a powerful, pre-trained [i]Minnen2018-Mean[/i] model as a frozen feature extractor. A small custom ResNet then classifies these features. This tests the quality of the pre-trained features directly.\n"
         "[bold]Fused Classifier:[/bold] A more complex model that fuses the main latent tensor with a 'texture' signal (the bit-rate) from the compression model before classification.\n"
-        "[bold]Mean Fused Classifier:[/bold] Fuses the main latent tensor with the 'uncertainty' signal (scales from the entropy model) before classification.",
+        "[bold]Mean Fused Classifier:[/bold] Fuses the main latent tensor with the 'uncertainty' signal (scales from the entropy model) before classification.\n"
+        "[bold]EfficientNet:[/bold] A standard, off-the-shelf image classification model known for its high accuracy and efficiency. It is fine-tuned on the target dataset.",
         title="[yellow]Model Descriptions[/yellow]",
         expand=False
     ))

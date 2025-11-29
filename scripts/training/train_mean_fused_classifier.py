@@ -9,17 +9,17 @@ import sys
 import copy
 from tqdm import tqdm
 
-from baseline_classifier import BaselineClassifier
+from scripts.mean_fused_classifier import MeanFusedClassifier
 
 
 def main():
     # --- Config ---
-    dataset_path = './dataset'
+    dataset_path = ('./dataset')
     batch_size = 32
     learning_rate = 1e-4
     num_epochs = 10
     num_classes = 7
-    quality = 3  # Minnen2018 quality level (1-8)
+    quality = 3  # Corresponds to the backbone quality in MeanFusedClassifier
 
     if torch.cuda.is_available():
         device = torch.device("cuda")
@@ -33,12 +33,14 @@ def main():
     pin_memory = True if device.type == 'cuda' else False
     print(f"Using device: {device}")
 
-    # --- Create Baseline Classifier ---
-    model = BaselineClassifier(num_classes=num_classes, quality=quality)
+    # --- Create Fused Classifier ---
+    # The MeanFusedClassifier handles loading the pretrained backbone internally
+    model = MeanFusedClassifier(num_classes=num_classes, quality=quality)
     model.to(device)
 
     # --- Data & Augmentation ---
-    # mbt2018_mean expects inputs in [0, 1]
+    # The mbt2018_mean model from compressai expects inputs in the [0, 1] range.
+    # ToTensor() already scales images to this range.
     train_transform = transforms.Compose([
         transforms.Resize((256, 256)),
         transforms.RandomHorizontalFlip(),
@@ -58,20 +60,19 @@ def main():
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=2, pin_memory=pin_memory)
 
     # --- Training Setup ---
-    # Only optimize parameters that require gradients (the classifier head)
+    # Only optimize parameters of the classifier head, as the backbone is frozen.
     optimizer = optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=learning_rate)
     criterion = nn.CrossEntropyLoss()
-
     scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=3)
 
     best_acc = 0.0
+    best_model_wts = copy.deepcopy(model.state_dict())
 
-    print("Starting training...")
+    print("Starting training for MeanFusedClassifier...")
     for epoch in range(num_epochs):
         # Train
         model.train()
         train_loss = 0.0
-
         pbar_train = tqdm(train_loader, desc=f"Epoch {epoch + 1}/{num_epochs} [Train]")
         for images, labels in pbar_train:
             images, labels = images.to(device), labels.to(device)
@@ -92,7 +93,6 @@ def main():
         val_loss = 0.0
         correct = 0
         total = 0
-
         pbar_val = tqdm(val_loader, desc=f"Epoch {epoch + 1}/{num_epochs} [Val]")
         with torch.no_grad():
             for images, labels in pbar_val:
@@ -100,27 +100,26 @@ def main():
                 outputs = model(images)
                 loss = criterion(outputs, labels)
                 val_loss += loss.item()
-
                 _, predicted = torch.max(outputs.data, 1)
                 total += labels.size(0)
                 correct += (predicted == labels).sum().item()
                 pbar_val.set_postfix({'Loss': loss.item()})
 
-
         avg_val_loss = val_loss / len(val_loader)
         accuracy = 100 * correct / total
-
         scheduler.step(avg_val_loss)
-
         print(f"Validation Loss: {avg_val_loss:.4f}, Accuracy: {accuracy:.2f}%")
 
-        # Save Best Model
         if accuracy > best_acc:
             best_acc = accuracy
-            torch.save(model.state_dict(), 'best_baseline_classifier.pth')
+            best_model_wts = copy.deepcopy(model.state_dict())
+            torch.save(best_model_wts, 'best_mean_fused_classifier.pth')
             print(f"--> New best model saved with accuracy: {best_acc:.2f}%")
 
     print(f"Training finished. Best Accuracy: {best_acc:.2f}%")
+    # Load best model weights back
+    model.load_state_dict(best_model_wts)
+    torch.save(model.state_dict(), 'best_mean_fused_classifier.pth')
 
 
 if __name__ == '__main__':

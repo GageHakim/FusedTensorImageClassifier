@@ -11,8 +11,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 
-from improved_baseline_classifier import ImprovedBaselineClassifier
-from evaluation_utils import plot_confusion_matrix, synchronize_device
+from scripts.improved_baseline_classifier import ImprovedBaselineClassifier
+from scripts.evaluation_utils import plot_confusion_matrix, synchronize_device
 
 
 def evaluate_improved_baseline():

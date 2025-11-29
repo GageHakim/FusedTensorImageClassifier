@@ -3,12 +3,9 @@ import torch.nn as nn
 import torch.nn.functional as F
 import sys
 
-# Ensure these paths match your directory structure
-sys.path.append('./hific')
-sys.path.append('./hific/src')
-from network import encoder
-from network import hyper
-from helpers import maths
+from hific.src.network import encoder
+from hific.src.network import hyper
+from hific.src.helpers import maths
 
 
 # --- 1. The Custom Lightweight Backbone ---
