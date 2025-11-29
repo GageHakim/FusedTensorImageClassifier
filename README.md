@@ -31,14 +31,14 @@ This project provides a framework for training and evaluating various image clas
 
 ## Setup
 
-1.  **Clone the repository with submodules:**
+1. **Clone the repository with submodules:**
 
     ```bash
     git clone --recurse-submodules https://github.com/your-username/FusedTensorImageClassifier.git
     cd FusedTensorImageClassifier
     ```
 
-2.  **Install dependencies:**
+2. **Install dependencies:**
 
     It is recommended to use a virtual environment.
 
@@ -48,7 +48,7 @@ This project provides a framework for training and evaluating various image clas
     pip install -r requirements.txt
     ```
 
-3.  **Build the C++ extension for HiFiC:**
+3. **Build the C++ extension for HiFiC:**
 
     The `hific` submodule requires a C++ extension to be built.
 
@@ -84,9 +84,9 @@ You can use the `scripts/prepare_dataset.py` script to automate the process of s
 
 To train a model, you need to configure and run the corresponding script in `scripts/training/`. For example, to train the Fused Classifier:
 
-1.  **Edit the training script:** Open `scripts/training/train_fused_classifier.py` and modify the configuration variables at the top of the `main()` function, such as `hific_checkpoint_path`, `dataset_path`, `batch_size`, `learning_rate`, etc.
+1. **Edit the training script:** Open `scripts/training/train_fused_classifier.py` and modify the configuration variables at the top of the `main()` function, such as `hific_checkpoint_path`, `dataset_path`, `batch_size`, `learning_rate`, etc.
 
-2.  **Run the script:**
+2. **Run the script:**
 
     ```bash
     python scripts/training/train_fused_classifier.py
@@ -103,9 +103,9 @@ python main.py
 ```
 
 The script will output:
-*   A description of each model.
-*   Tables comparing Accuracy, Inference Speed (ms/image), and Throughput (FPS).
-*   Confusion matrices for each model, saved as PNG files in the root directory.
+- A description of each model.
+- Tables comparing Accuracy, Inference Speed (ms/image), and Throughput (FPS).
+- Confusion matrices for each model, saved as PNG files in the root directory.
 
 You can also run individual evaluation scripts from `scripts/evaluation/`.
 
@@ -113,15 +113,15 @@ You can also run individual evaluation scripts from `scripts/evaluation/`.
 
 This project compares the following models:
 
-*   **Baseline Classifier:** A simple CNN trained from scratch on the target dataset. It serves as a performance baseline.
+- **Baseline Classifier:** A simple CNN trained from scratch on the target dataset. It serves as a performance baseline.
 
-*   **Improved Baseline:** This model uses a pre-trained `Minnen2018-Mean` image compression model as a frozen feature extractor. The latent tensor `y` from the compression model is fed into a custom lightweight ResNet for classification. This tests the raw feature quality of the pre-trained compression model.
+- **Improved Baseline:** This model uses a pre-trained `Minnen2018-Mean` image compression model as a frozen feature extractor. The latent tensor `y` from the compression model is fed into a custom lightweight ResNet for classification. This tests the raw feature quality of the pre-trained compression model.
 
-*   **Fused Classifier:** This model enhances the feature representation by fusing the main latent tensor `y` from the HiFiC compression model with a signal from its hyperprior. The hyperprior's role is to estimate the spatial distribution of bits, effectively acting as an **attention mechanism**. The `latent_scales` tensor from the hyperprior, which represents the uncertainty or importance of different parts of the latent space, is fused with `y` using a `GatedFusion` module. This allows the model to focus on more informative features before classification by the custom ResNet.
+- **Fused Classifier:** This model enhances the feature representation by fusing the main latent tensor `y` from the HiFiC compression model with a signal from its hyperprior. The hyperprior's role is to estimate the spatial distribution of bits, effectively acting as an **attention mechanism**. The `latent_scales` tensor from the hyperprior, which represents the uncertainty or importance of different parts of the latent space, is fused with `y` using a `GatedFusion` module. This allows the model to focus on more informative features before classification by the custom ResNet.
 
-*   **Mean Fused Classifier:** Similar to the Fused Classifier, this model uses a fusion approach. However, it employs the `mbt2018_mean` compression model as its backbone. It fuses the main latent tensor `y` with the `scales_hat` from the hyperprior, which also represents the bit distribution. The fused tensor is then classified by the same lightweight ResNet. This model explores a different pre-trained compression model's feature and hyperprior signal quality.
+- **Mean Fused Classifier:** Similar to the Fused Classifier, this model uses a fusion approach. However, it employs the `mbt2018_mean` compression model as its backbone. It fuses the main latent tensor `y` with the `scales_hat` from the hyperprior, which also represents the bit distribution. The fused tensor is then classified by the same lightweight ResNet. This model explores a different pre-trained compression model's feature and hyperprior signal quality.
 
-*   **EfficientNet:** A standard, off-the-shelf image classification model (EfficientNet-B0) known for its high accuracy and efficiency. It is fine-tuned on the target dataset and serves as a strong, conventional benchmark.
+- **EfficientNet:** A standard, off-the-shelf image classification model (EfficientNet-B0) known for its high accuracy and efficiency. It is fine-tuned on the target dataset and serves as a strong, conventional benchmark.
 
 ## Scripts Overview
 
@@ -129,11 +129,11 @@ This project compares the following models:
 
 This directory contains scripts to train each of the classifiers.
 
-*   `train_baseline_classifier.py`: Trains the simple CNN.
-*   `train_improved_baseline_classifier.py`: Trains the Improved Baseline model.
-*   `train_fused_classifier.py`: Trains the Fused Classifier. Requires a pre-trained HiFiC model checkpoint.
-*   `train_mean_fused_classifier.py`: Trains the Mean Fused Classifier.
-*   `train.py`: A generic training script, likely for EfficientNet.
+- `train_baseline_classifier.py`: Trains the simple CNN.
+- `train_improved_baseline_classifier.py`: Trains the Improved Baseline model.
+- `train_fused_classifier.py`: Trains the Fused Classifier. Requires a pre-trained HiFiC model checkpoint.
+- `train_mean_fused_classifier.py`: Trains the Mean Fused Classifier.
+- `train.py`: A generic training script, likely for EfficientNet.
 
 To run any of these scripts, you first need to **edit the script** to set the correct paths for the dataset and any required checkpoints, as well as to configure hyperparameters like learning rate, batch size, and number of epochs.
 
@@ -141,16 +141,15 @@ To run any of these scripts, you first need to **edit the script** to set the co
 
 This directory contains scripts to evaluate the performance of each trained classifier. These are called by `main.py`.
 
-*   `evaluate_baseline_classifier.py`
-*   `evaluate_improved_baseline_classifier.py`
-*   `evaluate_fused_classifier.py`
-*   `evaluate_mean_fused_classifier.py`
-*   `evaluate_efficientnet.py`
+- `evaluate_baseline_classifier.py`
+- `evaluate_improved_baseline_classifier.py`
+- `evaluate_fused_classifier.py`
+- `evaluate_mean_fused_classifier.py`
+- `evaluate_efficientnet.py`
 
 ### Other Scripts
 
-*   **`scripts/prepare_dataset.py`**: This script is used to process a raw dataset into the format required for training. It reads a source directory containing images and `.json` files with bounding box annotations. It crops the images, resizes them with padding, and splits them into `train`, `val`, and `test` sets. You will need to edit the paths in this script to match your dataset location.
-*   **`scripts/predict.py`**: This script allows you to make a prediction on a single image using a trained model. It takes the path to an image as a command-line argument. It is currently configured to use a trained `EfficientNet` model saved at `best_model.pth`.
+- **`scripts/prepare_dataset.py`**: This script is used to process a raw dataset into the format required for training. It reads a source directory containing images and `.json` files with bounding box annotations. It crops the images, resizes them with padding, and splits them into `train`, `val`, and `test` sets. You will need to edit the paths in this script to match your dataset location.
 
     ```bash
     python scripts/predict.py <path_to_your_image.jpg>
