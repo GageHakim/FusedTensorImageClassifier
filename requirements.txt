@@ -7,3 +7,4 @@ Pillow
 tqdm
 matplotlib
 seaborn
+rich
