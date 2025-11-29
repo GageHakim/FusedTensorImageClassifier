@@ -152,11 +152,11 @@ class FusedClassifier(nn.Module):
         """
         For compatibility with training loop.
         """
-        y, latent_scales = self.compress(x)
-        logits = self.classify(y, latent_scales)
+        features = self.extract_features(x)
+        logits = self.classify_features(features)
         return logits
 
-    def compress(self, x):
+    def extract_features(self, x):
         """
         Runs the HiFiC encoder part of the model.
         """
@@ -168,10 +168,11 @@ class FusedClassifier(nn.Module):
             latent_scales = maths.LowerBoundToward.apply(latent_scales, 0.11)
         return y, latent_scales
 
-    def classify(self, y, latent_scales):
+    def classify_features(self, features):
         """
         Runs the fusion and classification head.
         """
+        y, latent_scales = features
         # Detach inputs to stop backprop into HiFiC
         fused = self.fusion(y.detach(), latent_scales.detach())
         logits = self.classifier(fused)

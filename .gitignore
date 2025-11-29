@@ -8,6 +8,9 @@
 
 # Dataset and mdoel checkpoints
 dataset/
+dataset2/
+AGAR_dataset/
+__pycache__/
 *.pth
 *.pt
 
