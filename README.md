@@ -31,14 +31,29 @@ This project provides a framework for training and evaluating various image clas
 
 ## Setup
 
-1. **Clone the repository with submodules:**
+1. **Clone the repository:**
 
     ```bash
-    git clone --recurse-submodules https://github.com/your-username/FusedTensorImageClassifier.git
+    git clone https://github.com/your-username/FusedTensorImageClassifier.git
     cd FusedTensorImageClassifier
     ```
 
-2. **Install dependencies:**
+2. **Initialize and update submodules:**
+
+    ```bash
+    git submodule update --init --recursive
+    ```
+
+    > **Note:** The `hific` submodule is set to track the `plswork` branch. If you encounter issues (e.g., if you cloned without `--recurse-submodules` initially), you might need to manually ensure the `hific` directory is empty or removed before running the update command, or execute the following:
+    > ```bash
+    > git submodule add https://github.com/mea432/hific.git hific
+    > cd hific
+    > git checkout plswork
+    > cd ..
+    > ```
+    > Then run `git submodule update --init --recursive` again.
+
+3. **Install dependencies:**
 
     It is recommended to use a virtual environment.
 
@@ -48,7 +63,7 @@ This project provides a framework for training and evaluating various image clas
     pip install -r requirements.txt
     ```
 
-3. **Build the C++ extension for HiFiC:**
+4. **Build the C++ extension for HiFiC:**
 
     The `hific` submodule requires a C++ extension to be built.
 
